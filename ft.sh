@@ -34,15 +34,17 @@ comptmp=$tmp/compare.tmp;
 w2=$(cat $tmp/truegenetrees | wc -l )
 
 
-if [ "$ml" -gt "5000" ]; then
+if [ "$ml" -gt "13000" ]; then
 	mv $at/*.fas $tmp/	
 	for i in ` seq -w 1 $w2 | tr ' ' '\n' |  sort | head -n $w`; do
 		k=$l/$i.fas	
 		sed -n "$i,$i"p $tmp/truegenetrees > $tf
 		kt=$(basename $k)
-		fasttree -nt -quiet -nopr -gamma $k >> $tmp/estimatedgenetre.jc
+		fasttree -nt  -nopr -gamma $k >> $tmp/estimatedgenetre.jc 2>> $tmp/estimatedgenetre.jc.info
+		test "$?" -ne 0 && echo "an error encountered" && exit 1
 		tail -n 1 $tmp/estimatedgenetre.jc > $ejf
-		fasttree -nt -gtr -quiet -nopr -gamma $k >>  $tmp/estimatedgenetre.gtr
+		fasttree -nt -gtr -nopr -gamma $k >>  $tmp/estimatedgenetre.gtr 2>> $tmp/estimatedgenetre.gtr.info
+		test "$?" -ne 0 && echo "an error encountered" && exit 1
 		tail -n 1 $tmp/estimatedgenetre.gtr > $egf
 		sed -i 's/_0_0//g' $ejf
 		sed -i 's/_0_0//g' $egf
@@ -64,20 +66,23 @@ if [ "$ml" -gt "5000" ]; then
         	$WS_HOME/global/src/shell/compareTrees.missingBranch $tf $ejf >> $comptmp;
 	        cat $comptmp | tr '\n' ' ' >> $tmp/score-estimategenetre-jc.sc;
         	echo "" >> $tmp/score-estimategenetre-jc.sc;
-		echo $k
-		
+		echo $k		
 	done
 else
 	x=$l/all-genes.phylip
 	ojc=$tmp/estimatedgenetre.jc
 	ogtr=$tmp/estimatedgenetre.gtr
 
-	fasttree -nt -quiet -nopr -gamma -n $2 $x > $ojc
-	fasttree -nt -gtr -quiet -nopr -gamma -n $2 $x > $ogtr
+	fasttree -nt  -nopr -gamma -n $2 $x > $ojc 2>$ojc.info
+	fasttree -nt -gtr -nopr -gamma -n $2 $x > $ogtr 2>$ogtr.info
 fi
+a=$(cat $tmp/estimatedgenetre.jc | grep -o ";" | wc -l) 
+at=$(wc -l $tmp/truegenetrees)
+test "$a" -ne "$at" && echo "number of estimated gene trees is $a not equal to $at number of true gene trees" && exit 1
+
 sed -i 's/_0_0//g' $tmp/estimatedgenetre.jc;
 sed -i 's/_0_0//g' $tmp/estimatedgenetre.gtr;
-if [ "$ml" -le "5000" ]; then
+if [ "$ml" -le "13000" ]; then
 while read t<&3 && read eg<&4 && read ej<&5; do
         echo $t > $tf;
         echo $eg > $egf;
