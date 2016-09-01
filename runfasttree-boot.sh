@@ -6,7 +6,7 @@ module load python
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")"  && pwd )
 
-test $# == 8 || exit 1
+test $# == 10 || exit 1
 ALIGNAME=$1
 ID=$2
 GENEID=$3
@@ -15,6 +15,8 @@ label=$5
 repnum=$6
 reppartiallen=$7
 randomraxml=$8
+number_to_run=$9
+total_number_to_run="$10"
 rep=$(( repnum * reppartiallen ))
 repstart=$(( repnum * reppartiallen - reppartiallen + 1 ))
 repend=$(( repnum * reppartiallen )) 
@@ -59,7 +61,7 @@ fi
 rnd=$randomraxml
 raxmlHPC  -s ../$ALIGNAME -f j -b $rnd -n BS -m $model -# $crep
 mv ../*.BS* .
-if [ "$maxLen" -lt "5000" ]; then
+if [ "$maxLen" -lt "13000" ]; then
   	for bs in `seq $(( repstart - 1)) $(( crep - 1 ))`; do
 		
    		cat "$ALIGNAME".BS"$bs" >> "$ALIGNAME".BS-all
@@ -72,7 +74,7 @@ else
 fi
 
 
-if [ "$maxLen" -lt "5000" ]; then
+if [ "$maxLen" -lt "13000" ]; then
   	ttrep=$(( repend -repstart  + 1 ))
   	$DIR/fasttree $ftmodel -n $ttrep $ALIGNAME.BS-all > fasttree.tre.BS-all 2> ft.log.BS-all;  
   	test $? == 0 || { cat ft.log.BS-all; exit 1; }
