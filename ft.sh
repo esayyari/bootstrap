@@ -77,7 +77,7 @@ else
 	fasttree -nt -gtr -nopr -gamma -n $2 $x > $ogtr 2>$ogtr.info
 fi
 a=$(cat $tmp/estimatedgenetre.jc | grep -o ";" | wc -l) 
-at=$(wc -l $tmp/truegenetrees)
+at=$(cat $tmp/truegenetrees | wc -l )
 test "$a" -ne "$at" && echo "number of estimated gene trees is $a not equal to $at number of true gene trees" && exit 1
 
 sed -i 's/_0_0//g' $tmp/estimatedgenetre.jc;
