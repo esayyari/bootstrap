@@ -24,11 +24,21 @@ in=$ALIGNAME
 s="-p $randomraxml"
 dirn=fasttreboot."$in"."$label".start_"$repstart".end_"$repend".randomraxml_"$randomraxml"
 
-
+host=$(hostname | grep -o "comet\|gordon\|tscc")
+if [ "$host" == "tscc" ]; then
+	if [ ! -d /oasis/tscc/scratch/esayyari/$path/$ID/$GENEID ]; then
+		mkdir -p /oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
+	fi
+	outpath=/oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
+	inpath=$inpath/
+else
+	outpath=$inpath/
+	inpath=$inpath/
+fi
 tmpdir=`mktemp -d`
-ls $path/$ID/$GENEID/$ALIGNAME
-cp $path/$ID/$GENEID/$ALIGNAME $tmpdir/$ALIGNAME
-cp $path/$ID/$GENEID/$GENEID.fas $tmpdir/$GENEID.fas
+ls $inpath/$ALIGNAME
+cp $inpath/$ALIGNAME $tmpdir/$ALIGNAME
+cp $inpath/$GENEID.fas $tmpdir/$GENEID.fas
 maxLen=$(cat $tmpdir/$GENEID.fas | wc -L)
 
 sed -i 's/_0_0//g' $tmpdir/$ALIGNAME
@@ -76,11 +86,11 @@ fi
 
 if [ "$maxLen" -lt "13000" ]; then
   	ttrep=$(( repend -repstart  + 1 ))
-  	$DIR/fasttree $ftmodel -n $ttrep $ALIGNAME.BS-all > fasttree.tre.BS-all 2> ft.log.BS-all;  
+  	fasttree $ftmodel -n $ttrep $ALIGNAME.BS-all > fasttree.tre.BS-all 2> ft.log.BS-all;  
   	test $? == 0 || { cat ft.log.BS-all; exit 1; }
 else
   	for bs in `seq $(( repstart - 1)) $(( crep - 1 ))`; do
-		$DIR/fasttree -nt -nopr -gamma "$GENEID"*fas*BS"$bs" > fasttree.tre.BS$bs 2>ft.log.BS$bs;
+		fasttree -nt -nopr -gamma "$GENEID"*fas*BS"$bs" > fasttree.tre.BS$bs 2>ft.log.BS$bs;
 		test $? == 0 || { cat ft.log.BS$bs; exit 1; }
   	done
   	cat fasttree.tre.BS* > fasttree.tre.BS-all
@@ -94,22 +104,23 @@ fi
 sp=$(head -n 1 fasttree.tre.BS-all | nw_labels -I - | wc -l)
 if [ ! `grep ";" fasttree.tre.BS-all | wc -l` -eq $ttrep ]; then
 
-	echo `pwd`>>$path/$ID/$GENEID/notfinishedproperly
-	echo "repstart is $repstart, rep end is $repend, $randraxml" >> $path/$ID/$GENEID/notfinishedproperly
-	echo "the error is the number of trees is not equal to $ttrep" >> $path/$ID/$GENEID/notfinishedproperly 
+	echo `pwd`>>$outpath/notfinishedproperly
+	echo "repstart is $repstart, rep end is $repend, $randraxml" >> $outpath/notfinishedproperly
+	echo "the error is the number of trees is not equal to $ttrep" >> $outpath/notfinishedproperly 
 	exit 1
 fi
 while read x; do
 		if [ ! `echo $x | nw_labels -I - | wc -l` -eq "$sp" ]; then
-			echo `pwd`>>$path/$ID/$GENEID/notfinishedproperly
-		    	echo "repstart is $repstart, rep end is $repend, $randraxml" >> $path/$ID/$GENEID/notfinishedproperly	
-			echo "number of species is not constantly equal to $sp" >> $path/$ID/$GENEID/notfinishedproperly
+			echo `pwd`>>$outpath/notfinishedproperly
+		    	echo "repstart is $repstart, rep end is $repend, $randraxml" >> $outpath/notfinishedproperly	
+			echo "number of species is not constantly equal to $sp" >> $outpath/notfinishedproperly
 			exit 1
 		fi
 done < fasttree.tre.BS-all
-
+g=$(cat fasttree.tre.BS-all | grep -o ";" | wc -l)
+test "$g" -ne "$crep" && echo "repstart is $repstart, rep end is $repend, $randraxml, gene trees was not computed properly" >> $outpath/notfinishedproperly && exit 1
  #Finalize 
-tar cfj $path/$ID/$GENEID/genetrees.tar.bz."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml" $tmpdir 
+tar cfj $outpath/genetrees.tar.bz."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml" $tmpdir 
 cd $path/
-echo "Done">$path/$ID/$GENEID/done."$ALIGNAME".repstart_"$repend".repend_"$repend".randraxml_"$randomraxml"
+echo "Done">$outpath/done."$ALIGNAME".repstart_"$repend".repend_"$repend".randraxml_"$randomraxml"
 rm -r $tmpdir
