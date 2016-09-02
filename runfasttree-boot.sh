@@ -30,10 +30,15 @@ if [ "$host" == "tscc" ]; then
 		mkdir -p /oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
 	fi
 	outpath=/oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
-	inpath=$inpath/
+	inpath=$path/$ID/$GENEID/
 else
 	outpath=$inpath/
-	inpath=$inpath/
+	inpath=$path/$ID/$GENEID/
+fi
+wdone=$outpath/done."$ALIGNAME".repstart_"$repend".repend_"$repend".randraxml_"$randomraxml"
+if [ -s "$wdone" ]; then
+	wDone=$(cat $wdone | grep -o "Done");
+	test "$wDone" == "Done" && echo "wokring on this $wdone partition was finished previousely!" && exit 0
 fi
 tmpdir=`mktemp -d`
 ls $inpath/$ALIGNAME
