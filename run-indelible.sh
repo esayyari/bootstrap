@@ -2,7 +2,9 @@
 #set -x
 tmp=`mktemp -d`
 cd $tmp
-cp $1/* $tmp/
+cp $1/control.txt $tmp/
+cp $1/truegenetrees $tmp/
+cp $1/*trees $tmp/
 indelible
 cat *phy | sed '/^ *$/d' > all-genes.phylip
 

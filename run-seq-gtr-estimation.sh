@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-#$DIR/run-indelible.sh $1
+$DIR/run-indelible.sh $1
 $DIR/ft.sh $1 $2
 #tmpd=`mktemp -d`
 #cp $1/estimatedgenetrees.tar.gz $tmpd
