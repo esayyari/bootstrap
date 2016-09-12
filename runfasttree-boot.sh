@@ -26,15 +26,15 @@ dirn=fasttreboot."$in"."$label".start_"$repstart".end_"$repend".randomraxml_"$ra
 
 host=$(hostname | grep -o "comet\|gordon\|tscc")
 if [ "$host" == "tscc" ]; then
-	if [ ! -d /oasis/tscc/scratch/esayyari/$path/$ID/$GENEID ]; then
-		mkdir -p /oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
-	fi
+	mkdir -p /oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
 	outpath=/oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
 	inpath=$path/$ID/$GENEID/
 else
 	outpath=$inpath/
 	inpath=$path/$ID/$GENEID/
 fi
+echo $outpath
+echo $inpath
 wdone=$outpath/done."$ALIGNAME".repstart_"$repend".repend_"$repend".randraxml_"$randomraxml"
 if [ -s "$wdone" ]; then
 	wDone=$(cat $wdone | grep -o "Done");
@@ -128,4 +128,3 @@ test "$g" -ne "$crep" && echo "repstart is $repstart, rep end is $repend, $randr
 tar cfj $outpath/genetrees.tar.bz."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml" $tmpdir 
 cd $path/
 echo "Done">$outpath/done."$ALIGNAME".repstart_"$repend".repend_"$repend".randraxml_"$randomraxml"
-rm -r $tmpdir
