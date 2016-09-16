@@ -17,6 +17,8 @@ ls $H/$ID/*/$ALIGNNAME > list_BS_files.txt;
 while read x; do
 sed -n "$BS,$BS p" $x 
 done < list_BS_files.txt | head -n $G > "$ALIGNNAME"_"$BS"_"$G".gene_trees.trees
+sed -i "s/_0_0//g" "$ALIGNNAME"_"$BS"_"$G".gene_trees.trees
+sed -i "s/'//g" "$ALIGNNAME"_"$BS"_"$G".gene_trees.trees
 java -Xmx4000M -jar $ast -i "$ALIGNNAME"_"$BS"_"$G".gene_trees.trees -o  "$ALIGNNAME"_"$BS"_"$G".species_tree.trees >"$ALIGNNAME"_"$BS"_"$G".log.info 2>&1
 test "$#" -ne "0" && echo "something wrong has happened" && exit 1
 cd ..

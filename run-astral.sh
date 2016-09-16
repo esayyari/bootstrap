@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 DIR=$( cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 H=$1
 ID=$2
@@ -18,6 +19,6 @@ test $? -ne "0" && echo "something was wrong" && exit 1
 k=$(basename $tmpdir)
 j=$(dirname $tmpdir)
 cd ../
-mv $k $H/$ID/ASTRAL_SPECIES"$G"
+mv $k $H/$ID/ASTRAL_ML_SPECIES"$G"
 echo "Done"
 
