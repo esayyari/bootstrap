@@ -126,5 +126,7 @@ g=$(cat fasttree.tre.BS-all | grep -o ";" | wc -l)
 test "$g" -ne "$crep" && echo "repstart is $repstart, rep end is $repend, $randraxml, gene trees was not computed properly" >> $outpath/notfinishedproperly && exit 1
  #Finalize 
 tar cfj $outpath/genetrees.tar.bz."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml" $tmpdir 
+mkdir -p $outpath/genetrees."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml"/
+mv $tmpdir/fasttree.tre.BS-all $outpath/genetrees."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml"/fasttree.tre.BS-all
 cd $path/
 echo "Done">$outpath/done."$ALIGNAME".repstart_"$repend".repend_"$repend".randraxml_"$randomraxml"
