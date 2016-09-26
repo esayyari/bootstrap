@@ -32,7 +32,6 @@ my $locus;
 my $n_digits=0;
 my $trees;
 my $itree;
-my $al;
 #Truncated Gamma
 
 sub rlrtrunc_exp
@@ -102,8 +101,8 @@ foreach my  $dir (@dirs)
 	chdir($dir) or die "Error changing the working dir\n";
 
 	#Sampling Species_specific parameters and writing them into the SQLite DB.
-	  $shape_seqlength=gsl_ran_gamma($rng->raw(),193.8464,0.033); # write this in R to have an estimate of this distribution exp((2*log(500)-0.2-rgamma(500,scale=0.05,shape=log(500)*20))+(runif(500,0.3,0.7)^2)/2) #write this in R to have an estimate of the distribution : shape=c(0.01,0.02,0.025,0.0333,0.05,0.1);l=600;data.frame(cbind(shape,t(sapply(shape,function (x) summary(exp(2*log(l)-1/8-rgamma(500,scale=x,shape=log(l)*1/x)+(runif(500,0.3,0.7)^2)/2)))))); x=0.033;l=600;qplot(exp(2*log(l)-1/8-rgamma(500,scale=x,shape=log(l)*1/x)+(runif(500,0.3,0.7)^2)/2),binwidth=100);
-        $shape_seqlength=12.66886-$shape_seqlength;
+	$shape_seqlength=gsl_ran_gamma($rng->raw(),193.8464,0.033); 
+        $shape_seqlength=12.66886-$shape_seqlength; # These two lines are for sampling parameters that defines distribution of sequence length.  We use gamma distribution later with these parameters to draw the sequence length.
         $logscale_seqlength=gsl_ran_flat($rng->raw(),0.3,0.7);
 
 
@@ -141,7 +140,7 @@ foreach my  $dir (@dirs)
 		}
 
 		#Sampling Dirichlet (36 26 28 32) for frequencies (to avoid alignments without one of the bases)
-		$A=gsl_ran_gamma($rng->raw(),36,1);
+		$A=gsl_ran_gamma($rng->raw(),36,1); #The capital A,C,G, and T define equilibrium base frequenceies of A, C, G, and T.
 		$C=gsl_ran_gamma($rng->raw(),26,1);
 		$G=gsl_ran_gamma($rng->raw(),28,1);
 		$T=gsl_ran_gamma($rng->raw(),32,1);
@@ -150,11 +149,9 @@ foreach my  $dir (@dirs)
 		$C/=$f_total;
 		$T/=$f_total;
 		$G/=$f_total;
-		$al=gsl_ran_beta($rng->raw(),3,1);
-		$al=1;
 	
 		#Sampling Dirichlet ( 16   3   5   5   6  15) for frequencies
-		$a=gsl_ran_gamma($rng->raw(),16,1);
+		$a=gsl_ran_gamma($rng->raw(),16,1); #small letter variabels are for transition rates.
 		$b=gsl_ran_gamma($rng->raw(),3,1);
 		$c=gsl_ran_gamma($rng->raw(),5,1);
 		$d=gsl_ran_gamma($rng->raw(),5,1);
@@ -175,7 +172,7 @@ foreach my  $dir (@dirs)
 		$f/=$f;
        
 		#Sampling Sequence length
-		$length= int(gsl_ran_lognormal($rng->raw(),$shape_seqlength,$logscale_seqlength));
+		$length= int(gsl_ran_lognormal($rng->raw(),$shape_seqlength,$logscale_seqlength)); # This line draws sequence length with the parameters drawn previousely. 
 
 		$models.=sprintf("\[MODEL] GTR%.*d\n\t[submodel]  GTR %f %f %f %f %f\n\t[statefreq] %f %f %f %f\n\t[rates] 0 %f 0\n",$n_digits,$locus,$a,$b,$c,$d,$e,$T,$C,$A,$G,$alpha);
 		$trees.=sprintf("\[TREE\] T%.*d %s\n",$n_digits,$locus,$itree);
