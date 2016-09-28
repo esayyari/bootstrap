@@ -134,7 +134,7 @@ foreach my  $dir (@dirs)
 		close($filehandread);
 
 		#Sampling exponential(1.2), truncated at .1
-		$alpha=0;
+		$alpha=0; # To sample alpha.
 		while ($alpha < 0.1) {
 			$alpha=-log(gsl_rng_uniform_pos($rng->raw()))/1.2;
 		}
