@@ -15,7 +15,7 @@ Generates a pool of branches with their posterior probabilities using Astral.
 EOF
 }
 
-if [ $# -ne 5 ]; then 
+if [ $# -ne 10 ]; then 
 	show_help
 	exit 1 
 fi
@@ -72,7 +72,7 @@ echo "bipartitions and quartetpartition info of estimated species tree have been
 
 java -jar $WS_HOME/ASTRAL/astral.$version.jar -i $tsp -q $tsp -t 6 >> $tspScored 2>>$tspStat;
 test "$?" -ne 0 && echo "error raised in computing bipartition and quadripartitions info of true species tree" && cp $tspStat $o && exit 1
-cat $tspStat | grep "\{" > $tmptmp
+cat $tspStat | grep "^{" > $tmptmp
 awk 'NR %3 == 1' $tmptmp > $tspStat
 echo "bipartitions and quadripartitions info of true species tree have been generated"
 
@@ -80,7 +80,7 @@ res=$TmpFolder/ppOfBranches_species_tree
 $DIR/extractPPofPoolOfBranches.py -i $spStat -s $tspStat -o $res
 echo "pp of branches computed"
 
-tar czvf $out/ppAnalysis-$version.tar.gz $TmpFolder
+tar czvf $o/ppAnalysis-$version.tar.gz $TmpFolder
 
 rm -r $TmpFolder
 rm $tmptmp
