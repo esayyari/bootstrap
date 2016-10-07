@@ -70,6 +70,8 @@ echo "bipartitions and quartetpartition info of estimated species tree have been
 
 java -jar $WS_HOME/ASTRAL/astral.$version.jar -i $tsp -q $tsp -t 6 >> $tspScored 2>>$tspStat;
 test "$?" -ne 0 && echo "error raised in computing bipartition and quadripartitions info of true species tree" && cp $tspStat $p/error-"$sp"-species_tree.stat && exit 1
+cat $spStat | grep "^{" > $tmptmp
+cat $tmptmp > $spStat
 cat $tspStat | grep "^{" > $tmptmp
 awk 'NR %3 == 1' $tmptmp > $tspStat
 echo "bipartitions and quadripartitions info of true species tree have been generated"

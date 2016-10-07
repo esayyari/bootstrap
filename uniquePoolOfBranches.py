@@ -15,7 +15,7 @@ def uniquePoolOfBranches(inpt):
                 y = re.search('^\{',x)
                 if y:
                         qtInfo=re.sub('\[.*','',x)
-                        qtInfo=re.sub(' ','',qtInfo)
+                        qtInfo=re.sub(' ','@',qtInfo)
                         qtInfo= re.sub("\n","",qtInfo)
                         if qtInfo in poolBranches:
                                 continue
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 		if y:
 			n += 1
 			qtInfo=re.sub('\[.*','',x)
-			qtInfo=re.sub(' ','',qtInfo)
+			qtInfo=re.sub(' ','@',qtInfo)
 			qtInfo= re.sub("\n","",qtInfo)
 			if qtInfo in poolBranches:
 				
