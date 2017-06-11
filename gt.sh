@@ -7,6 +7,10 @@ tmp=`mktemp --tmpdir=/tmp/ -d`
 tru=$1
 est=$2
 
+bas=$(basename $est);
+das=$(dirname $est);
+
+mkdir $das/$bas/
 
 cd $tmp
 
@@ -34,6 +38,6 @@ while read t<&3 && read eg<&4; do
 done  3<$tru 4<$est
 
 dt=$(dirname $1)
-tar czvf $dt/estimatedgenetrees.tar.gz $tmp/*
+cp $tmp/score-estimategenetre.sc $das/$bas/score-estimategenetre.sc
 rm -r $tmp
 
