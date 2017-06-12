@@ -1,8 +1,10 @@
 #!/bin/bash
 set -x 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+DIR="$( cd "$( dirname $0)" && pwd)"
+#if [ ! -s $1/sequence.tar.gz ]; then
 $DIR/run-indelible.sh $1
-$DIR/ft.sh $1 $2
+#fi
+$DIR/ft-gtr.sh $1 $2
 #tmpd=`mktemp -d`
 #cp $1/estimatedgenetrees.tar.gz $tmpd
 #cd $tmpd

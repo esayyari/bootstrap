@@ -1,6 +1,11 @@
 #!/bin/bash
 set -x
-TMPDIR=/oasis/scratch/comet/$USER/temp_project
+host=$(hostname | grep -oe "comet\|gordon")
+if [ "$host" == "comet" ]; then
+	TMPDIR=/oasis/scratch/comet/$USER/temp_project
+else
+	TMPDIR=/oasis/scratch/$USER/temp_project/
+fi
 tmpd=`mktemp --tmpdir=$TMPDIR -d`
 tmp=`mktemp --tmpdir=/tmp/ -d`
 #if [ ! -s $1/sequence.tar.gz ]; then

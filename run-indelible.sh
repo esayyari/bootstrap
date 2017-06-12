@@ -11,5 +11,6 @@ cat *phy | sed '/^ *$/d' > all-genes.phylip
 #rm *phy
 
 tar czvf $1/sequence.tar.gz $tmp/*
+cp all-genes.phylip $1/
 echo $tmp
 rm -r $tmp
