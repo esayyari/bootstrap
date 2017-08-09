@@ -1,9 +1,9 @@
 #!/bin/bash
 
-set -x
+#set -x
 
 module load python
-
+module load dendropy
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")"  && pwd )
 
 test $# == 10 || exit 1
@@ -16,37 +16,38 @@ repnum=$6
 reppartiallen=$7
 randomraxml=$8
 number_to_run=$9
-total_number_to_run="$10"
 rep=$(( repnum * reppartiallen ))
 repstart=$(( repnum * reppartiallen - reppartiallen + 1 ))
-repend=$(( repnum * reppartiallen )) 
+repend=$(( repnum * reppartiallen ))
+total_number_to_run=$(( $number_to_run + $repend - $repstart ))
 in=$ALIGNAME
-s="-p $randomraxml"
-dirn=fasttreboot."$in"."$label".start_"$repstart".end_"$repend".randomraxml_"$randomraxml"
+u="-p $randomraxm_"
+dirn=fasttreboot."$in"."$label".start_"$repstart".end_"$repend".uandomraxml_"$randomraxml"
 
 host=$(hostname | grep -o "comet\|gordon\|tscc")
 if [ "$host" == "tscc" ]; then
 	mkdir -p /oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
 	outpath=/oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
-	inpath=$path/$ID/$GENEID/
 else
 	outpath=$inpath/
-	inpath=$path/$ID/$GENEID/
 fi
+inpath=/oasis/tscc/scratch/esayyari/$path/$ID/$GENEID/
+seqpath=/oasis/tscc/scratch/esayyari/$path/$ID/sequence/
+echo $seqpath
 echo $outpath
 echo $inpath
-wdone=$outpath/done."$ALIGNAME".repstart_"$repend".repend_"$repend".randraxml_"$randomraxml"
+wdone=$outpath/done."$ALIGNAME".repstart_"$number_to_run".repend_"$total_number_to_run".randraxml_"$randomraxml"
 if [ -s "$wdone" ]; then
 	wDone=$(cat $wdone | grep -o "Done");
 	test "$wDone" == "Done" && echo "wokring on this $wdone partition was finished previousely!" && exit 0
 fi
 tmpdir=`mktemp -d`
-ls $inpath/$ALIGNAME
-cp $inpath/$ALIGNAME $tmpdir/$ALIGNAME
-cp $inpath/$GENEID.fas $tmpdir/$GENEID.fas
+ls $seqpath/$ALIGNAME
+cp $seqpath/$ALIGNAME $tmpdir/$ALIGNAME
+cp $seqpath/$GENEID.fas $tmpdir/$GENEID.fas
 maxLen=$(cat $tmpdir/$GENEID.fas | wc -L)
 
-sed -i 's/_0_0//g' $tmpdir/$ALIGNAME
+#sed -i 's/_0_0//g' $tmpdir/$ALIGNAME
 cd $tmpdir
 pwd
 mkdir logs
@@ -54,7 +55,7 @@ mkdir logs
 test "`head -n 1 $ALIGNAME`" == "0 0" && exit 1
 
 model=GTRGAMMA
-ftmodel="-nt -nopr -gamma"
+ftmodel="-nt -nopr -gamma -gtr"
 
 mkdir $dirn
 cd $dirn
@@ -122,11 +123,13 @@ while read x; do
 			exit 1
 		fi
 done < fasttree.tre.BS-all
+trep=$(( $repend - $repstart + 1 ))
 g=$(cat fasttree.tre.BS-all | grep -o ";" | wc -l)
-test "$g" -ne "$crep" && echo "repstart is $repstart, rep end is $repend, $randraxml, gene trees was not computed properly" >> $outpath/notfinishedproperly && exit 1
- #Finalize 
-tar cfj $outpath/genetrees.tar.bz."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml" $tmpdir 
-mkdir -p $outpath/genetrees."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml"/
-mv $tmpdir/fasttree.tre.BS-all $outpath/genetrees."$ALIGNAME".repstart_"$repstart".repend_"$repend".randraxml_"$randomraxml"/fasttree.tre.BS-all
-cd $path/
-echo "Done">$outpath/done."$ALIGNAME".repstart_"$repend".repend_"$repend".randraxml_"$randomraxml"
+test "$g" -ne "$trep" && echo "repstart is $repstart, rep end is $repend, $randraxml, gene trees was not computed properly" >> $outpath/notfinishedproperly && exit 1
+ #Finalize
+ 
+mkdir -p $outpath/genetrees."$ALIGNAME".repstart_"$number_to_run".repend_"$total_number_to_run".randraxml_"$randomraxml"/
+cp fasttree.tre.BS-all $outpath/genetrees."$ALIGNAME".repstart_"$number_to_run".repend_"$total_number_to_run".randraxml_"$randomraxml"/fasttree.tre.BS-all
+tar cfj $outpath/genetrees.tar.bz."$ALIGNAME".repstart_"$number_to_run".repend_"$total_number_to_run".randraxml_"$randomraxml" $tmpdir 
+cd $outpath/
+echo "Done">$outpath/done."$ALIGNAME".repstart_"$number_to_run".repend_"$total_number_to_run".randraxml_"$randomraxml"

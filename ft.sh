@@ -1,11 +1,15 @@
 #!/bin/bash
 set -x
+<<<<<<< HEAD
 host=$(hostname | grep -oe "comet\|gordon")
 if [ "$host" == "comet" ]; then
 	TMPDIR=/oasis/scratch/comet/$USER/temp_project
 else
 	TMPDIR=/oasis/scratch/$USER/temp_project/
 fi
+=======
+TMPDIR=/oasis/tscc/scratch/esayyari/
+>>>>>>> a8e94dc7d9079c64029e7ee2512fab9b5f87bfea
 tmpd=`mktemp --tmpdir=$TMPDIR -d`
 tmp=`mktemp --tmpdir=/tmp/ -d`
 #if [ ! -s $1/sequence.tar.gz ]; then
@@ -13,19 +17,26 @@ tmp=`mktemp --tmpdir=/tmp/ -d`
 #fi
 echo $tmpd
 cd $tmpd
-cp $1/sequence.tar.gz $tmpd 
-tar xzvf $tmpd/sequence.tar.gz --wildcards --no-anchored "*.fas" 
-tar xzvf $tmpd/sequence.tar.gz --wildcards --no-anchored "all-genes.phylip"
-a=$(find $tmpd -name "*.fas" | head -n 1)
+j=$3
+cat $1/sequence/*_$3_TRUE.phy > $1/sequence/all-genes_$3.phylip
+#tar czvf $1/sequence.tar.gz $1/sequence/all-genes_$3.phylip
+#cp $1/sequence.tar.gz $tmpd 
+mkdir -p $tmpd/sequence
+cp $1/sequence/all-genes_$3.phylip $tmpd/sequence
+#tar xzvf $tmpd/sequence.tar.gz --wildcards --no-anchored "*.fas" 
+#tar xzvf $tmpd/sequence.tar.gz
+#tar xzvf $tmpd/sequence.tar.gz --wildcards --no-anchored "all-genes*.phylip"
+#a=$(find $tmpd -name "*.fas" | head -n 1)
+a=$(find $tmpd -name "all-genes_$j.phylip")
 at=$(dirname $a) 
 
 cd $tmp
-x=$(find $tmpd -name "all-genes.phylip")
+x=$(find $tmpd -name "all-genes_$j.phylip")
 echo $x
-mv $x $tmp/all-genes.phylip
+mv $x $tmp/all-genes_$j.phylip
 
 l=$tmp
-ml=$(cat $tmp/all-genes.phylip | wc -L )
+ml=$(cat $tmp/all-genes_$j.phylip | wc -L )
 echo $ml
 w=$2
 echo $w
@@ -74,19 +85,19 @@ if [ "$ml" -gt "13000" ]; then
 		echo $k		
 	done
 else
-	x=$l/all-genes.phylip
-	ojc=$tmp/estimatedgenetre.jc
-	ogtr=$tmp/estimatedgenetre.gtr
+	x=$l/all-genes_$j.phylip
+	ojc=$tmp/estimatedgenetre_$j.jc
+	ogtr=$tmp/estimatedgenetre_$j.gtr
 
 	fasttree -nt  -nopr -gamma -n $2 $x > $ojc 2>$ojc.info
 	fasttree -nt -gtr -nopr -gamma -n $2 $x > $ogtr 2>$ogtr.info
 fi
-a=$(cat $tmp/estimatedgenetre.jc | grep -o ";" | wc -l) 
+a=$(cat $tmp/estimatedgenetre_$j.jc | grep -o ";" | wc -l) 
 at=$(cat $tmp/truegenetrees | wc -l )
 test "$a" -ne "$at" && echo "number of estimated gene trees is $a not equal to $at number of true gene trees" && exit 1
 
-sed -i 's/_0_0//g' $tmp/estimatedgenetre.jc;
-sed -i 's/_0_0//g' $tmp/estimatedgenetre.gtr;
+sed -i 's/_0_0//g' $tmp/estimatedgenetre_$j.jc;
+sed -i 's/_0_0//g' $tmp/estimatedgenetre_$j.gtr;
 if [ "$ml" -le "13000" ]; then
 while read t<&3 && read eg<&4 && read ej<&5; do
         echo $t > $tf;
@@ -108,18 +119,18 @@ while read t<&3 && read eg<&4 && read ej<&5; do
                 $WS_HOME/global/src/shell/compareTrees.missingBranch $ejf $tf > $comptmp;
         fi;
         $WS_HOME/global/src/shell/compareTrees.missingBranch $tf $ejf >> $comptmp;
-        cat $comptmp | tr '\n' ' ' >> $tmp/score-estimategenetre-jc.sc;
-        echo "" >> $tmp/score-estimategenetre-jc.sc;
-done  3<$tmp/truegenetrees 4<$tmp/estimatedgenetre.gtr 5<$tmp/estimatedgenetre.jc;
+        cat $comptmp | tr '\n' ' ' >> $tmp/score-estimategenetre_$j-jc.sc;
+        echo "" >> $tmp/score-estimategenetre_$j-jc.sc;
+done  3<$tmp/truegenetrees 4<$tmp/estimatedgenetre_$j.gtr 5<$tmp/estimatedgenetre_$j.jc;
 fi
 a=$(seq -w 1 $w2 | tr ' ' '\n' | head -n 1)
 if [ -s $tmp/$a.fas ]; then
 	rm  $tmp/*.fas
 fi
-tar czvf $1/estimatedgenetrees.tar.gz $tmp/*
+tar czvf $1/estimatedgenetrees_$j.tar.gz $tmp/*
 rm $tmpd/sequence.tar.gz
 rm -r $tmpd/tmp*
-cp $1/estimatedgenetrees.tar.gz $tmpd
+cp $1/estimatedgenetrees_$j.tar.gz $tmpd
 cd ~
 rm -r $tmp
 
