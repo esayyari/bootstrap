@@ -21,8 +21,8 @@ repstart=$(( repnum * reppartiallen - reppartiallen + 1 ))
 repend=$(( repnum * reppartiallen ))
 total_number_to_run=$(( $number_to_run + $repend - $repstart ))
 in=$ALIGNAME
-s="-p $randomraxml"
-dirn=fasttreboot."$in"."$label".start_"$repstart".end_"$repend".randomraxml_"$randomraxml"
+u="-p $randomraxm_"
+dirn=fasttreboot."$in"."$label".start_"$repstart".end_"$repend".uandomraxml_"$randomraxml"
 
 host=$(hostname | grep -o "comet\|gordon\|tscc")
 if [ "$host" == "tscc" ]; then
