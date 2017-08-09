@@ -10,7 +10,7 @@ est=$2
 bas=$(basename $est);
 das=$(dirname $est);
 
-mkdir $das/$bas/
+mkdir $das/directory.$bas/
 
 cd $tmp
 
@@ -37,7 +37,6 @@ while read t<&3 && read eg<&4; do
         echo "" >> $tmp/score-estimategenetre.sc;
 done  3<$tru 4<$est
 
-dt=$(dirname $1)
-cp $tmp/score-estimategenetre.sc $das/$bas/score-estimategenetre.sc
+cp $tmp/score-estimategenetre.sc $das/directory.$bas/score-estimategenetre.sc
 rm -r $tmp
 

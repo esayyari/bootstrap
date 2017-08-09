@@ -31,8 +31,8 @@ if [ "$host" == "tscc" ]; then
 else
 	outpath=$inpath/
 fi
-inpath=/oasis/tscc/scratch/esayyari/$path/$ID/$GENEID/
-seqpath=/oasis/tscc/scratch/esayyari/$path/$ID/sequence/
+inpath=$path/$ID/$GENEID/
+seqpath=$path/$ID/sequence/
 echo $seqpath
 echo $outpath
 echo $inpath
@@ -47,7 +47,7 @@ cp $seqpath/$ALIGNAME $tmpdir/$ALIGNAME
 cp $seqpath/$GENEID.fas $tmpdir/$GENEID.fas
 maxLen=$(cat $tmpdir/$GENEID.fas | wc -L)
 
-sed -i 's/_0_0//g' $tmpdir/$ALIGNAME
+#sed -i 's/_0_0//g' $tmpdir/$ALIGNAME
 cd $tmpdir
 pwd
 mkdir logs
