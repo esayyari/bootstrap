@@ -1,6 +1,6 @@
 #!/bin/bash
 #set -x
-tmp=`mktemp /oasis/scratch/comet/esayyari/temp_project/multiind/tmp.XXXXX -d`
+tmp=`mktemp /oasis/tscc/scratch/esayyari/largeN/tmp.XXXXX -d`
 cd $tmp
 cp $1/control.txt $tmp/
 cp $1/truegenetrees $tmp/

@@ -26,8 +26,8 @@ dirn=fasttreboot."$in"."$label".start_"$repstart".end_"$repend".uandomraxml_"$ra
 
 host=$(hostname | grep -o "comet\|gordon\|tscc")
 if [ "$host" == "tscc" ]; then
-	mkdir -p /oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
-	outpath=/oasis/tscc/scratch/esayyari/$path/$ID/$GENEID
+	mkdir -p $path/$ID/$GENEID
+	outpath=$path/$ID/$GENEID
 else
 	outpath=$inpath/
 fi

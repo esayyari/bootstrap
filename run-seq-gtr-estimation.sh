@@ -2,7 +2,7 @@
 set -x 
 DIR="$( cd "$( dirname $0)" && pwd)"
 #if [ ! -s $1/sequence.tar.gz ]; then
-#$DIR/run-indelible.sh $1
+$DIR/run-indelible.sh $1
 #fi
 $DIR/ft-gtr.sh $1 $2
 #tmpd=`mktemp -d`

@@ -4,7 +4,7 @@ host=$(hostname | grep -oe "comet\|gordon")
 if [ "$host" == "comet" ]; then
 	TMPDIR=/oasis/scratch/comet/$USER/temp_project/multiind
 else
-	TMPDIR=/oasis/scratch/$USER/temp_project/
+	TMPDIR=/oasis/tscc/scratch/$USER/
 fi
 tmpd=`mktemp --tmpdir=$TMPDIR -d`
 tmp=`mktemp --tmpdir=$TMPDIR -d`
