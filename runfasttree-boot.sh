@@ -25,14 +25,15 @@ u="-p $randomraxm_"
 dirn=fasttreboot."$in"."$label".start_"$repstart".end_"$repend".uandomraxml_"$randomraxml"
 
 host=$(hostname | grep -o "comet\|gordon\|tscc")
+
+inpath=$path/$ID/$GENEID/
+seqpath=$path/$ID/sequence/
 if [ "$host" == "tscc" ]; then
 	mkdir -p $path/$ID/$GENEID
 	outpath=$path/$ID/$GENEID
 else
 	outpath=$inpath/
 fi
-inpath=$path/$ID/$GENEID/
-seqpath=$path/$ID/sequence/
 echo $seqpath
 echo $outpath
 echo $inpath
