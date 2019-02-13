@@ -6,7 +6,7 @@ module load python
 module load dendropy
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")"  && pwd )
 echo "USAGE: ${BASH_SOURCE[0]} [alignment name without fasta or phylip at the end] [Replicate ID (each gene seperately)] [GENEID in replicate ID] [path (directory where all replicates located)] [label (a label for this run)] [repnum (number of replicates for each boostrapping] [reppartiallen (length of each replicate)] [randomraxml (random number)] [number_to_run from what replicate you want to continue]"
-test $# == 10 || exit 1
+test $# == 9 || exit 1
 ALIGNAME=$1
 ID=$2
 GENEID=$3
